@@ -1,0 +1,279 @@
+﻿@using MHF_Manager.Data;
+@using System.Globalization;
+@using System.IO;
+@using Newtonsoft.Json;
+@page "/craftingtables/{tableName}"
+@inherits MainLayout
+
+<MudContainer Class="mt-16 px-8" MaxWidth="MaxWidth.False">
+	<h2>MHF Crafting Tables:</h2>
+
+	<MudTable Items="@table.entries" Dense="true" Hover="true" ReadOnly="false" CanCancelEdit="true" Filter="new Func<CraftingTableEntry,bool>(FilterFunc)" SortLabel="Sort By"
+			  IsEditRowSwitchingBlocked="false" ApplyButtonPosition="TableApplyButtonPosition.Start" EditTrigger="TableEditTrigger.RowClick" RowEditPreview="StartEdit"
+			  RowEditCancel="CancelEdit" RowEditCommit="FinishEdit">
+		<ToolBarContent>
+			<MudTextField @bind-Value="searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+		</ToolBarContent>
+
+		<HeaderContent>
+			<MudTh><MudTableSortLabel SortBy="new Func<CraftingTableEntry, object>(x=>x.Position)">Position</MudTableSortLabel></MudTh>
+			<MudTh><MudTableSortLabel SortBy="new Func<CraftingTableEntry, object>(x=>x.data.TypeClass)">TypeClass</MudTableSortLabel></MudTh>
+			<MudTh><MudTableSortLabel SortBy="new Func<CraftingTableEntry, object>(x=>x.data.UnkFlag)">UnkFlag</MudTableSortLabel></MudTh>
+			<MudTh><MudTableSortLabel SortBy="new Func<CraftingTableEntry, object>(x=>x.data.EquipId)">EquipId</MudTableSortLabel></MudTh>
+			<MudTh><MudTableSortLabel SortBy="new Func<CraftingTableEntry, object>(x=>x.data.FirstItemId)">FirstItemId</MudTableSortLabel></MudTh>
+			<MudTh><MudTableSortLabel SortBy="new Func<CraftingTableEntry, object>(x=>x.data.FirstAmount)">FirstAmount</MudTableSortLabel></MudTh>
+			<MudTh><MudTableSortLabel SortBy="new Func<CraftingTableEntry, object>(x=>x.data.SecondItemId)">SecondItemId</MudTableSortLabel></MudTh>
+			<MudTh><MudTableSortLabel SortBy="new Func<CraftingTableEntry, object>(x=>x.data.SecondAmount)">SecondAmount</MudTableSortLabel></MudTh>
+			<MudTh><MudTableSortLabel SortBy="new Func<CraftingTableEntry, object>(x=>x.data.ThirdItemId)">ThirdItemId</MudTableSortLabel></MudTh>
+			<MudTh><MudTableSortLabel SortBy="new Func<CraftingTableEntry, object>(x=>x.data.ThirdAmount)">ThirdAmount</MudTableSortLabel></MudTh>
+			<MudTh><MudTableSortLabel SortBy="new Func<CraftingTableEntry, object>(x=>x.data.ForthItemId)">ForthItemId</MudTableSortLabel></MudTh>
+			<MudTh><MudTableSortLabel SortBy="new Func<CraftingTableEntry, object>(x=>x.data.ForthAmount)">ForthAmount</MudTableSortLabel></MudTh>
+			<MudTh><MudTableSortLabel SortBy="new Func<CraftingTableEntry, object>(x=>x.data.IsPremium)">IsPremium</MudTableSortLabel></MudTh>
+			@if (expertMode)
+			{
+				<MudTh><MudTableSortLabel SortBy="new Func<CraftingTableEntry, object>(x=>x.data.Unk0)">Unk0</MudTableSortLabel></MudTh>
+				<MudTh><MudTableSortLabel SortBy="new Func<CraftingTableEntry, object>(x=>x.data.Unk1)">Unk1</MudTableSortLabel></MudTh>
+				<MudTh><MudTableSortLabel SortBy="new Func<CraftingTableEntry, object>(x=>x.data.Unk3)">Unk3</MudTableSortLabel></MudTh>
+				<MudTh><MudTableSortLabel SortBy="new Func<CraftingTableEntry, object>(x=>x.data.Unk4)">Unk4</MudTableSortLabel></MudTh>
+				<MudTh><MudTableSortLabel SortBy="new Func<CraftingTableEntry, object>(x=>x.data.Unk5)">Unk5</MudTableSortLabel></MudTh>
+				<MudTh><MudTableSortLabel SortBy="new Func<CraftingTableEntry, object>(x=>x.data.Unk6)">Unk6</MudTableSortLabel></MudTh>
+				<MudTh><MudTableSortLabel SortBy="new Func<CraftingTableEntry, object>(x=>x.data.Unk7)">Unk7</MudTableSortLabel></MudTh>
+				<MudTh><MudTableSortLabel SortBy="new Func<CraftingTableEntry, object>(x=>x.data.Unk8)">Unk8</MudTableSortLabel></MudTh>
+				<MudTh><MudTableSortLabel SortBy="new Func<CraftingTableEntry, object>(x=>x.data.Unk9)">Unk9</MudTableSortLabel></MudTh>
+				<MudTh><MudTableSortLabel SortBy="new Func<CraftingTableEntry, object>(x=>x.data.Unk10)">Unk10</MudTableSortLabel></MudTh>
+				<MudTh><MudTableSortLabel SortBy="new Func<CraftingTableEntry, object>(x=>x.data.Unk11)">Unk11</MudTableSortLabel></MudTh>
+				<MudTh><MudTableSortLabel SortBy="new Func<CraftingTableEntry, object>(x=>x.data.Unk12)">Unk12</MudTableSortLabel></MudTh>
+				<MudTh><MudTableSortLabel SortBy="new Func<CraftingTableEntry, object>(x=>x.data.Unk14)">Unk14</MudTableSortLabel></MudTh>
+				<MudTh><MudTableSortLabel SortBy="new Func<CraftingTableEntry, object>(x=>x.data.Unk15)">Unk15</MudTableSortLabel></MudTh>
+				<MudTh><MudTableSortLabel SortBy="new Func<CraftingTableEntry, object>(x=>x.data.Unk16)">Unk16</MudTableSortLabel></MudTh>
+				<MudTh><MudTableSortLabel SortBy="new Func<CraftingTableEntry, object>(x=>x.data.Unk17)">Unk17</MudTableSortLabel></MudTh>
+				<MudTh><MudTableSortLabel SortBy="new Func<CraftingTableEntry, object>(x=>x.data.Unk18)">Unk18</MudTableSortLabel></MudTh>
+			}
+		</HeaderContent>
+		<RowTemplate>
+			<MudTd DataLabel="Position">@(showHex ? "0x" +      context.Position.ToString("X") : @context.Position)</MudTd>
+			<MudTd DataLabel="TypeClass">@(showHex ? "0x" +     context.data.TypeClass.ToString("X") : @context.data.TypeClass)</MudTd>
+			<MudTd DataLabel="UnkFlag">@(showHex ? "0x" +       context.data.UnkFlag.ToString("X") : @context.data.UnkFlag)</MudTd>
+			<MudTd DataLabel="EquipId">@(showHex ? "0x" +       context.data.EquipId.ToString("X") : @context.data.EquipId)</MudTd>
+			<MudTd DataLabel="FirstItemId">@(showHex ? "0x" +   context.data.FirstItemId.ToString("X") : @context.data.FirstItemId)</MudTd>
+			<MudTd DataLabel="FirstAmount">@(showHex ? "0x" +   context.data.FirstAmount.ToString("X") : @context.data.FirstAmount)</MudTd>
+			<MudTd DataLabel="SecondItemId">@(showHex ? "0x" +  context.data.SecondItemId.ToString("X") : @context.data.SecondItemId)</MudTd>
+			<MudTd DataLabel="SecondAmount">@(showHex ? "0x" +  context.data.SecondAmount.ToString("X") : @context.data.SecondAmount)</MudTd>
+			<MudTd DataLabel="ThirdItemId">@(showHex ? "0x" +   context.data.ThirdItemId.ToString("X") : @context.data.ThirdItemId)</MudTd>
+			<MudTd DataLabel="ThirdAmount">@(showHex ? "0x" +   context.data.ThirdAmount.ToString("X") : @context.data.ThirdAmount)</MudTd>
+			<MudTd DataLabel="ForthItemId">@(showHex ? "0x" +   context.data.ForthItemId.ToString("X") : @context.data.ForthItemId)</MudTd>
+			<MudTd DataLabel="ForthAmount">@(showHex ? "0x" +   context.data.ForthAmount.ToString("X") : @context.data.ForthAmount)</MudTd>
+			<MudTd DataLabel="IsPremium">@(showHex ? "0x" +     context.data.IsPremium.ToString("X") : @context.data.IsPremium)</MudTd>
+			@if (expertMode)
+			{
+				<MudTd DataLabel="Unk0">@(showHex ? "0x" +  context.data.Unk0.ToString("X") : @context.data.Unk0)</MudTd>
+				<MudTd DataLabel="Unk1">@(showHex ? "0x" +  context.data.Unk1.ToString("X") : @context.data.Unk1)</MudTd>
+				<MudTd DataLabel="Unk3">@(showHex ? "0x" +  context.data.Unk3.ToString("X") : @context.data.Unk3)</MudTd>
+				<MudTd DataLabel="Unk4">@(showHex ? "0x" +  context.data.Unk4.ToString("X") : @context.data.Unk4)</MudTd>
+				<MudTd DataLabel="Unk5">@(showHex ? "0x" +  context.data.Unk5.ToString("X") : @context.data.Unk5)</MudTd>
+				<MudTd DataLabel="Unk6">@(showHex ? "0x" +  context.data.Unk6.ToString("X") : @context.data.Unk6)</MudTd>
+				<MudTd DataLabel="Unk7">@(showHex ? "0x" +  context.data.Unk7.ToString("X") : @context.data.Unk7)</MudTd>
+				<MudTd DataLabel="Unk8">@(showHex ? "0x" +  context.data.Unk8.ToString("X") : @context.data.Unk8)</MudTd>
+				<MudTd DataLabel="Unk9">@(showHex ? "0x" +  context.data.Unk9.ToString("X") : @context.data.Unk9)</MudTd>
+				<MudTd DataLabel="Unk10">@(showHex ? "0x" + context.data.Unk10.ToString("X") : @context.data.Unk10)</MudTd>
+				<MudTd DataLabel="Unk11">@(showHex ? "0x" + context.data.Unk11.ToString("X") : @context.data.Unk11)</MudTd>
+				<MudTd DataLabel="Unk12">@(showHex ? "0x" + context.data.Unk12.ToString("X") : @context.data.Unk12)</MudTd>
+				<MudTd DataLabel="Unk14">@(showHex ? "0x" + context.data.Unk14.ToString("X") : @context.data.Unk14)</MudTd>
+				<MudTd DataLabel="Unk15">@(showHex ? "0x" + context.data.Unk15.ToString("X") : @context.data.Unk15)</MudTd>
+				<MudTd DataLabel="Unk16">@(showHex ? "0x" + context.data.Unk16.ToString("X") : @context.data.Unk16)</MudTd>
+				<MudTd DataLabel="Unk17">@(showHex ? "0x" + context.data.Unk17.ToString("X") : @context.data.Unk17)</MudTd>
+				<MudTd DataLabel="Unk18">@(showHex ? "0x" + context.data.Unk18.ToString("X") : @context.data.Unk18)</MudTd>
+			}
+		</RowTemplate>
+		<RowEditingTemplate>
+			<MudTd DataLabel="Position">@("0x" + context.Position.ToString("X"))</MudTd>
+			<MudTd DataLabel="TypeClass"><MudTextField @bind-Value="@context.data.TypeClass" Required /></MudTd>
+			<MudTd DataLabel="UnkFlag"><MudTextField @bind-Value="@context.data.UnkFlag" Required /></MudTd>
+			<MudTd DataLabel="EquipId"><MudTextField @bind-Value="@context.data.EquipId" Required /></MudTd>
+			<MudTd DataLabel="FirstItemId"><MudTextField @bind-Value="@context.data.FirstItemId" Required /></MudTd>
+			<MudTd DataLabel="FirstAmount"><MudTextField @bind-Value="@context.data.FirstAmount" Required /></MudTd>
+			<MudTd DataLabel="SecondItemId"><MudTextField @bind-Value="@context.data.SecondItemId" Required /></MudTd>
+			<MudTd DataLabel="SecondAmount"><MudTextField @bind-Value="@context.data.SecondAmount" Required /></MudTd>
+			<MudTd DataLabel="ThirdItemId"><MudTextField @bind-Value="@context.data.ThirdItemId" Required /></MudTd>
+			<MudTd DataLabel="ThirdAmount"><MudTextField @bind-Value="@context.data.ThirdAmount" Required /></MudTd>
+			<MudTd DataLabel="ForthItemId"><MudTextField @bind-Value="@context.data.ForthItemId" Required /></MudTd>
+			<MudTd DataLabel="ForthAmount"><MudTextField @bind-Value="@context.data.ForthAmount" Required /></MudTd>
+			<MudTd DataLabel="IsPremium"><MudTextField @bind-Value="@context.data.IsPremium" Required /></MudTd>
+			@if (expertMode)
+			{
+				<MudTd DataLabel="Unk0"><MudTextField @bind-Value="@context.data.Unk0" Required /></MudTd>
+				<MudTd DataLabel="Unk1"><MudTextField @bind-Value="@context.data.Unk1" Required /></MudTd>
+				<MudTd DataLabel="Unk3"><MudTextField @bind-Value="@context.data.Unk3" Required /></MudTd>
+				<MudTd DataLabel="Unk4"><MudTextField @bind-Value="@context.data.Unk4" Required /></MudTd>
+				<MudTd DataLabel="Unk5"><MudTextField @bind-Value="@context.data.Unk5" Required /></MudTd>
+				<MudTd DataLabel="Unk6"><MudTextField @bind-Value="@context.data.Unk6" Required /></MudTd>
+				<MudTd DataLabel="Unk7"><MudTextField @bind-Value="@context.data.Unk7" Required /></MudTd>
+				<MudTd DataLabel="Unk8"><MudTextField @bind-Value="@context.data.Unk8" Required /></MudTd>
+				<MudTd DataLabel="Unk9"><MudTextField @bind-Value="@context.data.Unk9" Required /></MudTd>
+				<MudTd DataLabel="Unk10"><MudTextField @bind-Value="@context.data.Unk10" Required /></MudTd>
+				<MudTd DataLabel="Unk11"><MudTextField @bind-Value="@context.data.Unk11" Required /></MudTd>
+				<MudTd DataLabel="Unk12"><MudTextField @bind-Value="@context.data.Unk12" Required /></MudTd>
+				<MudTd DataLabel="Unk14"><MudTextField @bind-Value="@context.data.Unk14" Required /></MudTd>
+				<MudTd DataLabel="Unk15"><MudTextField @bind-Value="@context.data.Unk15" Required /></MudTd>
+				<MudTd DataLabel="Unk16"><MudTextField @bind-Value="@context.data.Unk16" Required /></MudTd>
+				<MudTd DataLabel="Unk17"><MudTextField @bind-Value="@context.data.Unk17" Required /></MudTd>
+				<MudTd DataLabel="Unk18"><MudTextField @bind-Value="@context.data.Unk18" Required /></MudTd>
+			}
+		</RowEditingTemplate>
+		<PagerContent>
+			<MudTablePager />
+		</PagerContent>
+		<EditButtonContent Context="button">
+			<MudIconButton Size="@Size.Small" Icon="@Icons.Outlined.Edit" Class="pa-0" OnClick="@button.ButtonAction" Disabled="@button.ButtonDisabled" />
+		</EditButtonContent>
+	</MudTable>
+	<MudSwitch @bind-Checked="@expertMode" Color="Color.Primary">Expert</MudSwitch>
+	<MudSwitch @bind-Checked="@showHex" Color="Color.Primary">Show as Hex</MudSwitch>
+	<MudGrid>
+		<MudItem xs="12" md="4">
+			<MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined">
+				<MudButton Disabled="true">Save Options</MudButton>
+				<MudMenu Disabled="@(changes.Count <= 0)" Icon="@Icons.Material.Filled.ArrowDropDown">
+					<MudMenuItem OnClick="() => SaveChanges(0)">Write to Mhfdat</MudMenuItem>
+					<MudMenuItem OnClick="() => SaveChanges(1)">Create Patch File</MudMenuItem>
+					<MudMenuItem OnClick="() => SaveChanges(2)">Both</MudMenuItem>
+				</MudMenu>
+			</MudButtonGroup>
+			<MudButton>Inspect (@changes.Count) Change/s</MudButton>
+		</MudItem>
+	</MudGrid>
+</MudContainer>
+@code {
+	[Parameter] public string TableName { get; set; }
+	[Inject] private IDialogService DialogService { get; set; }
+
+	private bool expertMode = false;
+	private bool showHex = false;
+	private CraftingTableEntry? currentEdit;
+	private string searchString = "";
+	CraftingTable table;
+	List<Tuple<CraftingTableEntry, CraftingTableEntry>> changes = new();
+
+	protected override void OnInitialized()
+	{
+		table = StaticCraftingTableData.CraftingTables.Where(i => i.name == TableName).FirstOrDefault();
+		table.init();
+	}
+
+	protected void SaveChanges(int Mode)
+	{
+		BinaryWriter writer = StaticData.GetMhfdat().GetMhfdatWriter();
+		int numberOfChanges = changes.Count;
+		/*
+		* 0 = Write to file
+		* 1 = Save as Patch
+		* 2 = Write to file and Create Patch
+		*/
+		if (Mode == 0 || Mode == 2)
+		{
+			for (int i = 0; i < changes.Count; i++)
+			{
+				Tuple<CraftingTableEntry, CraftingTableEntry> change = changes.ElementAt(i);
+
+				//change.Item2.test();
+				change.Item2.writeToStream(writer);
+				changes.Remove(change);
+			}
+
+			DialogService.ShowMessageBox("Changes written!", "Succesfully wrote: " + numberOfChanges.ToString() + " change/s to the mhfdat.bin");
+		}
+
+		if(Mode == 1 || Mode == 2)
+		{
+
+		}
+		
+		StateHasChanged();
+	}
+
+	private void StartEdit(object entry)
+	{
+		currentEdit = new CraftingTableEntry((CraftingTableEntry)entry);
+	}
+	private void CancelEdit(object entry)
+	{
+		currentEdit.CopyTo((CraftingTableEntry)entry);
+	}
+	private void FinishEdit(object entry)
+	{
+		if (!currentEdit.HasChanged((CraftingTableEntry) entry))
+		{
+			return;
+		}
+
+		Tuple<CraftingTableEntry, CraftingTableEntry>? existingChange = changes.Where(i => i.Item1.Position == currentEdit.Position).FirstOrDefault();
+		if (existingChange != null)
+		{
+			if (!existingChange.Item1.HasChanged((CraftingTableEntry)entry))
+			{
+				changes.Remove(existingChange);
+			} else
+			{
+				Tuple<CraftingTableEntry, CraftingTableEntry> newEntry = new Tuple<CraftingTableEntry, CraftingTableEntry>(existingChange.Item1, (CraftingTableEntry)entry);
+				changes.Remove(existingChange);
+				changes.Add(newEntry);
+			}
+		} else
+		{
+			changes.Add(new Tuple<CraftingTableEntry, CraftingTableEntry>(currentEdit, (CraftingTableEntry)entry));
+		}
+
+		StateHasChanged();
+	}
+
+	protected override async Task OnParametersSetAsync()
+	{
+		OnInitialized();
+	}
+
+	private bool FilterFunc(CraftingTableEntry craftingTableEntry)
+	{
+
+
+		if (string.IsNullOrWhiteSpace(searchString))
+			return true;
+
+		int tmp = 0;
+
+		if (searchString.ToUpper().StartsWith("0X") && int.TryParse(searchString.ToUpper().Replace("0X", ""), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out tmp))
+			searchString = tmp.ToString();
+
+		if ($@"{craftingTableEntry.Position}
+														{craftingTableEntry.data.TypeClass}
+														{craftingTableEntry.data.UnkFlag}
+														{craftingTableEntry.data.EquipId}
+														{craftingTableEntry.data.FirstItemId}
+														{craftingTableEntry.data.FirstAmount}
+														{craftingTableEntry.data.Unk0}
+														{craftingTableEntry.data.Unk1}
+														{craftingTableEntry.data.SecondItemId}
+														{craftingTableEntry.data.SecondAmount}
+														{craftingTableEntry.data.Unk3}
+														{craftingTableEntry.data.Unk4}
+														{craftingTableEntry.data.ThirdItemId}
+														{craftingTableEntry.data.ThirdAmount}
+														{craftingTableEntry.data.Unk5}
+														{craftingTableEntry.data.Unk6}
+														{craftingTableEntry.data.ForthItemId}
+														{craftingTableEntry.data.ForthAmount}
+														{craftingTableEntry.data.Unk7}
+														{craftingTableEntry.data.Unk8}
+														{craftingTableEntry.data.Unk9}
+														{craftingTableEntry.data.Unk10}
+														{craftingTableEntry.data.Unk11}
+														{craftingTableEntry.data.Unk12}
+														{craftingTableEntry.data.IsPremium}
+														{craftingTableEntry.data.Unk14}
+														{craftingTableEntry.data.Unk15}
+														{craftingTableEntry.data.Unk16}
+														{craftingTableEntry.data.Unk17}
+														{craftingTableEntry.data.Unk18}".Contains(searchString))
+			return true;
+		return false;
+	}
+}

@@ -1,0 +1,30 @@
+﻿@page "/"
+@inherits MainLayout
+@using MHF_Manager.Data;
+
+<MudContainer Class="mt-16 px-8" MaxWidth="MaxWidth.False">
+    <h2>This tool is used to easily edit the mhfdat.bin (And maybe more in the future) from the Monster Hunter Frontier Client.</h2>
+
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick="OpenFileAsync">Open mhfdat.bin to get started!</MudButton>
+</MudContainer>
+@code {
+    @inject NavigationManager NavigationManager;
+
+    public void OpenFileAsync()
+    {
+        
+        Microsoft.Win32.OpenFileDialog FilePicker = new Microsoft.Win32.OpenFileDialog();
+        
+        FilePicker.Filter = "BIN Files (*.bin)|*.bin";
+
+        if (FilePicker.ShowDialog() != true)
+        {
+            return;
+        }
+
+        StaticData.SetMhfdat(new Data.Mhfdat(FilePicker.FileName));
+        
+        NavigationManager.NavigateTo("", true);
+    }
+
+}

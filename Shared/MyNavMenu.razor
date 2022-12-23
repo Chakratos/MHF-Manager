@@ -1,0 +1,11 @@
+﻿@using MHF_Manager.Data
+<MudNavMenu>
+    <MudNavLink Href="/" Match="NavLinkMatch.All">Dashboard</MudNavLink>
+    <MudNavGroup Title="Crafting Tables" Expanded="false">
+        @foreach (CraftingTable table in StaticCraftingTableData.CraftingTables)
+        {
+            <MudNavLink Href='@("/craftingtables/"+@table.name)' Match="NavLinkMatch.Prefix">@table.name</MudNavLink>
+        }
+    </MudNavGroup>
+    <MudNavLink Href="/about" Match="NavLinkMatch.Prefix">About</MudNavLink>
+</MudNavMenu>
